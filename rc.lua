@@ -6,9 +6,12 @@ require("awful.rules")
 require("beautiful")
 -- Notification library
 require("naughty")
-
--- Load Debian menu entries
-require("debian.menu")
+-- Mod: Vicious widget library
+require("vicious")
+-- Mod: revelation library
+--require("revelation")
+-- Mod: eminent library
+require("eminent")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -37,10 +40,12 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+-- Mod: use zenburn theme
+beautiful.init(awful.util.getdir("config") .. "/themes/zenburn.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "x-terminal-emulator"
+-- Mod: hard code urxvt as term
+terminal = "urxvt"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -88,18 +93,52 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "Debian", debian.menu.Debian_menu.Debian },
                                     { "open terminal", terminal }
                                   }
                         })
 
-mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
-                                     menu = mymainmenu })
 -- }}}
 
--- {{{ Wibox
+-- {{{ Mod: add Wibox
+-- Create a CPU widget
+cpuwidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft })
+cpuwidget:set_width(40)
+cpuwidget:set_background_color(theme.bg_normal)
+cpuwidget:set_color('#FFFFFF')
+--cpuwidget:set_gradient_colors({ '#FF5656', '#88A175', '#AECF96' })
+vicious.register(cpuwidget, vicious.widgets.cpu, '$1', 5)
+
+-- Create a memory widget
+memwidget = widget({ type = "textbox" })
+--vicious.cache(vicious.widgets.mem)
+vicious.register(memwidget, vicious.widgets.mem, "$2M ", 13)
+
+-- Create a battery widget
+batwidget = widget({ type = "textbox" })
+vicious.register(batwidget, vicious.widgets.bat,
+    function (widget, args)
+        if (args[3] == "N/A") then
+            return string.format("%s%s%% ", args[1], args[2])
+        else
+            return string.format("%s%s%% %s ", args[1], args[2], args[3])
+        end
+    end, 61, "BAT0")
+
+-- Create a temperature widget
+thmwidget = widget({ type = "textbox" })
+vicious.register(thmwidget, vicious.widgets.thermal, "$1° ", 19, {"coretemp.0", "core"})
+
+-- Create a net widget
+netwidget = widget({ type = "textbox" })
+--vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}/${eth0 up_kb}KB ", 7)
+vicious.register(netwidget, vicious.widgets.net,
+    function (widget, args)
+        return args["{eth0 down_kb}"]+args["{wlan0 down_kb}"] .. "/" .. args["{eth0 up_kb}"]+args["{wlan0 up_kb}"] .. "KB "
+    end, 7)
+
 -- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
+-- Mod: make clock at left
+mytextclock = awful.widget.textclock({ align = "left" }, " %a %m/%d <b>%H:%M</b> ")
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -173,14 +212,18 @@ for s = 1, screen.count() do
     -- Add widgets to the wibox - order matters
     mywibox[s].widgets = {
         {
-            mylauncher,
+            mytextclock,
             mytaglist[s],
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s],
-        mytextclock,
         s == 1 and mysystray or nil,
+        s == 1 and cpuwidget or nil,
+        s == 1 and memwidget or nil,
+        s == 1 and thmwidget or nil,
+        s == 1 and batwidget or nil,
+        s == 1 and netwidget or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -212,6 +255,54 @@ globalkeys = awful.util.table.join(
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
+
+    -- Mod: revelation
+    --awful.key({modkey}, "e", revelation),
+
+    -- Mod: Window info
+    awful.key({ modkey, "Control" }, "i",
+        function ()
+            local c = client.focus
+            local crole = "N/A"
+            local cgeom = c:geometry()
+            if c.role then crole = c.role end
+            if c then naughty.notify({
+                text = "Class:    " .. c.class .. "\n"
+                .. "Instance: " .. c.instance .. "\n"
+                .. "Role:     " .. crole .. "\n"
+                .. "Type:     " .. c.type .. "\n"
+                .. "Geometry: "
+                .. cgeom.x .. " " .. cgeom.y .. " " .. cgeom.width .. " " .. cgeom.height
+            })
+            else naughty.notify({ text = "No focused window" })
+            end
+        end),
+
+    -- Mod: Center window
+    awful.key({ modkey, }, "c",
+        function ()
+            local c = client.focus
+            if c then
+                awful.placement.centered(c, c.transient_for)
+            end
+        end),
+
+    -- Mod: Make window ontop
+    awful.key({ modkey, }, "t",
+        function ()
+            local c = client.focus
+            if c then
+                c.ontop = not c.ontop
+            end
+        end),
+
+    -- Mod: App
+    awful.key({ }, "XF86Eject", function () awful.util.spawn_with_shell("i3lock -c 000000; xset dpms force off") end),
+    awful.key({ }, "XF86Display", function () awful.util.spawn("my-extern-monitor right") end),
+
+    -- Mod: Volume
+    awful.key({ modkey }, ".", function () awful.util.spawn("my-volume up") end),
+    awful.key({ modkey }, ",", function () awful.util.spawn("my-volume down") end),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
@@ -246,7 +337,7 @@ globalkeys = awful.util.table.join(
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
-    awful.key({ modkey }, "x",
+    awful.key({ modkey, "Shift" }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
                   mypromptbox[mouse.screen].widget,
@@ -257,7 +348,7 @@ globalkeys = awful.util.table.join(
 
 clientkeys = awful.util.table.join(
     awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end),
+    awful.key({ modkey,           }, "x",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
     awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
@@ -271,8 +362,14 @@ clientkeys = awful.util.table.join(
         end),
     awful.key({ modkey,           }, "m",
         function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c.maximized_vertical   = not c.maximized_vertical
+            -- Mod: check if horizontally and vertically maxed first
+            if c.maximized_horizontal and c.maximized_vertical then
+                c.maximized_horizontal = false
+                c.maximized_vertical = false
+            else
+                c.maximized_horizontal = true
+                c.maximized_vertical = true
+            end
         end)
 )
 
@@ -328,20 +425,51 @@ root.keys(globalkeys)
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
-      properties = { border_width = beautiful.border_width,
+      properties = { border_width = 0,
                      border_color = beautiful.border_normal,
+                     size_hints_honor = false,
                      focus = true,
                      keys = clientkeys,
                      buttons = clientbuttons } },
     { rule = { class = "MPlayer" },
-      properties = { floating = true } },
+      properties = { floating = true, border_width = 0 } },
+    { rule = { class = "mplayer2" },
+      properties = { floating = true,
+                     border_width = 0 } },
     { rule = { class = "pinentry" },
       properties = { floating = true } },
     { rule = { class = "gimp" },
       properties = { floating = true } },
+    { rule = { class = "feh" },
+      properties = { floating = true } },
+    { rule = { class = "Cview" },
+      properties = { floating = true } },
+    { rule = { class = "URxvt" },
+      properties = { opacity = 0.9, border_width = beautiful.border_width } },
     -- Set Firefox to always map on tags number 2 of screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { tag = tags[1][2] } },
+    { rule = { class = "Firefox", instance = "Navigator" },
+      properties = { tag = tags[1][2], border_width = 0 } },
+    { rule = { class = "Iceweasel", instance = "Navigator" },
+      properties = { tag = tags[1][2], border_width = 0 } },
+    { rule = { class = "Aurora", instance = "Navigator" },
+      properties = { tag = tags[1][2] } },
+    { rule = { class = "Chromium-browser" },
+      properties = { tag = tags[1][2] } },
+    -- screen 3
+    { rule = { class = "Icedove-bin" },
+      properties = { tag = tags[1][3] } },
+    -- screen 4
+    { rule = { class = "Pidgin" },
+      properties = { tag = tags[1][4] } },
+    { rule = { class = "emesene" },
+      properties = { tag = tags[1][4] } },
+    { rule = { class = "Empathy" },
+      properties = { tag = tags[1][4] } },
+    -- screen 5
+    { rule = { class = "VirtualBox" },
+      properties = { tag = tags[1][5] } },
+    { rule = { class = "VBoxSDL" },
+      properties = { tag = tags[1][5] } },
 }
 -- }}}
 
@@ -362,16 +490,50 @@ client.add_signal("manage", function (c, startup)
     if not startup then
         -- Set the windows at the slave,
         -- i.e. put it at the end of others instead of setting it master.
-        -- awful.client.setslave(c)
+        awful.client.setslave(c)
 
         -- Put windows in a smart way, only if they does not set an initial position.
         if not c.size_hints.user_position and not c.size_hints.program_position then
             awful.placement.no_overlap(c)
             awful.placement.no_offscreen(c)
+	    -- Mod: place new floating client center
+	    if awful.client.floating.get(c) and not c.maximized_horizontal
+		    and not c.maximized_vertical and c.class ~= "Iceweasel"
+		    and c.class ~= "Firefox" then
+		    awful.placement.centered(c, c.transient_for)
+	    end
         end
     end
 end)
 
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
+-- Mod: for a rest
+mytimer = timer { timeout = 3600 }
+mytimer:add_signal("timeout", function()
+    --awful.util.spawn("notify-send '             Time for a REST'")
+    awful.util.spawn("notify-send 'Time for a REST'")
+end)
+mytimer:start()
+
+-- http://awesome.naquadah.org/wiki/Autostart
+function run_once(prg,arg_string,pname,screen)
+    if not prg then
+        do return nil end
+    end
+    if not pname then
+       pname = prg
+    end
+    if not arg_string then
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
+    else
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. " " .. arg_string .. ")",screen)
+    end
+end
+--run_once("unagi")
+run_once("compton -Ccf -t-3 -l-5 -r4.2 -o.65 -I.14 -O.15 -m.85 --vsync opengl --dbe --vsync-aggressive --paint-on-overlay --use-ewmh-active-win --sw-opti")
+run_once("parcellite")
+run_once("xcalib .color/icc/Apple_Macbook_Pro_5,2_LCD.icc")
+-- run_once("xsetroot -cursor_name left_ptr")
 -- }}}

@@ -128,6 +128,10 @@ vicious.register(batwidget, vicious.widgets.bat,
 thmwidget = widget({ type = "textbox" })
 vicious.register(thmwidget, vicious.widgets.thermal, "$1° ", 19, {"coretemp.0", "core"})
 
+-- Create a wifi widget
+wifiwidget = widget({ type = "textbox" })
+vicious.register(wifiwidget, vicious.widgets.wifi, "${ssid} ", 23, "wlan0")
+
 -- Create a net widget
 netwidget = widget({ type = "textbox" })
 --vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}/${eth0 up_kb}KB ", 7)
@@ -223,6 +227,7 @@ for s = 1, screen.count() do
         s == 1 and memwidget or nil,
         s == 1 and thmwidget or nil,
         s == 1 and batwidget or nil,
+        s == 1 and wifiwidget or nil,
         s == 1 and netwidget or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft

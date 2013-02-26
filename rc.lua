@@ -501,12 +501,12 @@ client.add_signal("manage", function (c, startup)
         if not c.size_hints.user_position and not c.size_hints.program_position then
             awful.placement.no_overlap(c)
             awful.placement.no_offscreen(c)
-	    -- Mod: place new floating client center
-	    if awful.client.floating.get(c) and not c.maximized_horizontal
-		    and not c.maximized_vertical and c.class ~= "Iceweasel"
-		    and c.class ~= "Firefox" then
-		    awful.placement.centered(c, c.transient_for)
-	    end
+            -- Mod: place new floating client center
+            if awful.client.floating.get(c) and not c.maximized_horizontal
+                    and not c.maximized_vertical and c.class ~= "Iceweasel"
+                    and c.class ~= "Firefox" then
+                    awful.placement.centered(c, c.transient_for)
+            end
         end
     end
 end)

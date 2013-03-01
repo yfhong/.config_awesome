@@ -520,8 +520,7 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 -- Mod: for a rest
 mytimer = timer { timeout = 3600 }
 mytimer:add_signal("timeout", function()
-    --awful.util.spawn("notify-send '             Time for a REST'")
-    awful.util.spawn("notify-send 'Time for a REST'")
+    naughty.notify({ text = "Time for a REST" })
 end)
 mytimer:start()
 

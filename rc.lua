@@ -11,6 +11,7 @@ require("vicious")
 -- Mod: revelation library
 --require("revelation")
 -- Mod: eminent library
+package.path = package.path .. ';' .. awful.util.getdir("config") .. "/eminent/?.lua"
 require("eminent")
 
 -- {{{ Error handling

@@ -138,7 +138,15 @@ netwidget = widget({ type = "textbox" })
 --vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}/${eth0 up_kb}KB ", 7)
 vicious.register(netwidget, vicious.widgets.net,
     function (widget, args)
-        return args["{eth0 down_kb}"]+args["{wlan0 down_kb}"] .. "/" .. args["{eth0 up_kb}"]+args["{wlan0 up_kb}"] .. "KB "
+        local down_kb, up_kb
+        if (args["{wlan0 down_kb}"] ~= nil) then
+            down_kb = args["{wlan0 down_kb}"]
+            up_kb= args["{wlan0 up_kb}"]
+        else
+            down_kb = args["{eth0 down_kb}"]
+            up_kb= args["{eth0 up_kb}"]
+        end
+        return down_kb .. "/" .. up_kb .. "KB "
     end, 7)
 
 -- Create a textclock widget

@@ -6,11 +6,11 @@ require("awful.rules")
 require("beautiful")
 -- Notification library
 require("naughty")
--- Mod: Vicious widget library
+-- Vicious widget library
 require("vicious")
--- Mod: revelation library
+-- Revelation library
 --require("revelation")
--- Mod: eminent library
+-- Eminent library
 package.path = package.path .. ';' .. awful.util.getdir("config") .. "/eminent/?.lua"
 require("eminent")
 
@@ -41,11 +41,11 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
--- Mod: use zenburn theme
+-- Use zenburn theme
 beautiful.init(awful.util.getdir("config") .. "/themes/zenburn.lua")
 
 -- This is used later as the default terminal and editor to run.
--- Mod: hard code urxvt as term
+-- Hard code urxvt as term
 terminal = "urxvt"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
@@ -100,7 +100,7 @@ mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesom
 
 -- }}}
 
--- {{{ Mod: add Wibox
+-- {{{ Wibox
 -- Create a CPU widget
 cpuwidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft })
 cpuwidget:set_width(40)
@@ -150,7 +150,7 @@ vicious.register(netwidget, vicious.widgets.net,
     end, 7)
 
 -- Create a textclock widget
--- Mod: make clock at left
+-- Make clock at left
 mytextclock = awful.widget.textclock({ align = "left" }, " %a %m/%d <b>%H:%M</b> ")
 
 -- Create a systray
@@ -274,10 +274,10 @@ globalkeys = awful.util.table.join(
         end),
     awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
 
-    -- Mod: revelation
+    -- Revelation
     --awful.key({modkey}, "e", revelation),
 
-    -- Mod: Window info
+    -- Window info
     awful.key({ modkey, "Control" }, "i",
         function ()
             local c = client.focus
@@ -296,7 +296,7 @@ globalkeys = awful.util.table.join(
             end
         end),
 
-    -- Mod: Center window
+    -- Center window
     awful.key({ modkey, }, "c",
         function ()
             local c = client.focus
@@ -305,7 +305,7 @@ globalkeys = awful.util.table.join(
             end
         end),
 
-    -- Mod: Make window ontop
+    -- Make window ontop
     awful.key({ modkey, }, "t",
         function ()
             local c = client.focus
@@ -314,12 +314,12 @@ globalkeys = awful.util.table.join(
             end
         end),
 
-    -- Mod: App
+    -- Misc
     awful.key({ }, "XF86Eject", lock_screen),
     awful.key({ }, "Pause", lock_screen),
     awful.key({ }, "XF86Display", function () awful.util.spawn("my-extern-monitor right") end),
 
-    -- Mod: Volume
+    -- Volume
     awful.key({ modkey }, ".", function () awful.util.spawn("my-volume up") end),
     awful.key({ modkey }, ",", function () awful.util.spawn("my-volume down") end),
 
@@ -381,7 +381,7 @@ clientkeys = awful.util.table.join(
         end),
     awful.key({ modkey,           }, "m",
         function (c)
-            -- Mod: check if horizontally and vertically maxed first
+            -- Check if horizontally and vertically maxed first
             if c.maximized_horizontal and c.maximized_vertical then
                 c.maximized_horizontal = false
                 c.maximized_vertical = false
@@ -517,7 +517,7 @@ client.add_signal("manage", function (c, startup)
         if not c.size_hints.user_position and not c.size_hints.program_position then
             awful.placement.no_overlap(c)
             awful.placement.no_offscreen(c)
-            -- Mod: place new floating client center
+            -- Place new floating client center
             if awful.client.floating.get(c) and not c.maximized_horizontal
                     and not c.maximized_vertical and c.class ~= "Iceweasel"
                     and c.class ~= "Firefox" then
@@ -530,7 +530,7 @@ end)
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
--- Mod: for a rest
+-- For a rest
 mytimer = timer { timeout = 3600 }
 mytimer:add_signal("timeout", function()
     naughty.notify({ text = "Time for a REST" })

@@ -253,6 +253,10 @@ root.buttons(awful.util.table.join(
 -- }}}
 
 -- {{{ Key bindings
+function lock_screen ()
+    awful.util.spawn_with_shell("i3lock -c 000000; xset dpms force off")
+end
+
 globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
@@ -311,7 +315,8 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Mod: App
-    awful.key({ }, "XF86Eject", function () awful.util.spawn_with_shell("i3lock -c 000000; xset dpms force off") end),
+    awful.key({ }, "XF86Eject", lock_screen),
+    awful.key({ }, "Pause", lock_screen),
     awful.key({ }, "XF86Display", function () awful.util.spawn("my-extern-monitor right") end),
 
     -- Mod: Volume

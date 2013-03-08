@@ -131,7 +131,7 @@ vicious.register(thmwidget, vicious.widgets.thermal, "$1° ", 19, {"coretemp.0",
 
 -- Create a wifi widget
 wifiwidget = widget({ type = "textbox" })
-vicious.register(wifiwidget, vicious.widgets.wifi, "${ssid} ", 23, "wlan0")
+vicious.register(wifiwidget, vicious.widgets.wifi, "${ssid} ", 63, "wlan0")
 
 -- Create a net widget
 netwidget = widget({ type = "textbox" })

@@ -575,7 +575,7 @@ function run_once(prg,arg_string,pname,screen)
     end
 end
 --run_once("unagi")
-run_once("compton -Ccf -t-3 -l-5 -r4.2 -o.65 -I.14 -O.15 -m.85 --vsync opengl --dbe --vsync-aggressive --paint-on-overlay --use-ewmh-active-win --sw-opti")
+run_once("compton")
 run_once("parcellite")
 run_once("xcalib .color/icc/Apple_Macbook_Pro_5,2_LCD.icc")
 run_once("xautolock -time 15 -locker 'i3lock --color=000000'")

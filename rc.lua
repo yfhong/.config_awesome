@@ -252,7 +252,20 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 function lock_screen ()
-    awful.util.spawn_with_shell("i3lock -c 000000; xset dpms force off")
+    awful.util.spawn_with_shell("xset q | grep -q 'prefer blanking:  yes' && xautolock -locknow || (xautolock -enable; sleep 1; xautolock -locknow)")
+end
+
+function toggle_blank ()
+    local f = io.popen("xset q")
+    local xset = f:read("*all")
+    f:close()
+    if string.find(xset, "prefer blanking:  yes") then
+        awful.util.spawn_with_shell("xset -dpms s noblank s off; xautolock -disable")
+        naughty.notify({text = "Disable screensaver"})
+    else
+        awful.util.spawn_with_shell("xset +dpms s default; xautolock -enable")
+        naughty.notify({text = "Enable screensaver"})
+    end
 end
 
 globalkeys = awful.util.table.join(
@@ -315,6 +328,8 @@ globalkeys = awful.util.table.join(
     -- Misc
     awful.key({ }, "XF86Eject", lock_screen),
     awful.key({ }, "Pause", lock_screen),
+    awful.key({ modkey }, "XF86Eject", toggle_blank),
+    awful.key({ modkey }, "Pause", toggle_blank),
     awful.key({ }, "XF86Display", function () awful.util.spawn("my-extern-monitor right") end),
 
     -- Volume
@@ -553,5 +568,6 @@ end
 run_once("compton -Ccf -t-3 -l-5 -r4.2 -o.65 -I.14 -O.15 -m.85 --vsync opengl --dbe --vsync-aggressive --paint-on-overlay --use-ewmh-active-win --sw-opti")
 run_once("parcellite")
 run_once("xcalib .color/icc/Apple_Macbook_Pro_5,2_LCD.icc")
+run_once("xautolock -time 15 -locker 'i3lock --color=000000'")
 -- run_once("xsetroot -cursor_name left_ptr")
 -- }}}

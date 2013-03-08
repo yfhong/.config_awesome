@@ -130,8 +130,18 @@ thmwidget = widget({ type = "textbox" })
 vicious.register(thmwidget, vicious.widgets.thermal, "$1° ", 19, {"coretemp.0", "core"})
 
 -- Create a wifi widget
-wifiwidget = widget({ type = "textbox" })
-vicious.register(wifiwidget, vicious.widgets.wifi, "${ssid} ", 63, "wlan0")
+function has_wifi ()
+    local f = io.open("/proc/net/dev")
+    s = f:read("*all")
+    f:close()
+    return string.match(s, "wlan") ~= nil
+end
+if has_wifi() then
+    wifiwidget = widget({ type = "textbox" })
+    vicious.register(wifiwidget, vicious.widgets.wifi, "${ssid} ", 63, "wlan0")
+else
+    wifiwidget = nil
+end
 
 -- Create a net widget
 netwidget = widget({ type = "textbox" })

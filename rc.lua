@@ -487,9 +487,9 @@ awful.rules.rules = {
     { rule = { class = "Cview" },
       properties = { floating = true } },
     { rule = { class = "URxvt" },
-      properties = { opacity = 0.9, border_width = beautiful.border_width } },
+      properties = { opacity = 0.97, border_width = beautiful.border_width } },
     { rule = { class = "Gvim" },
-      properties = { opacity = 0.94 } },
+      properties = { opacity = 0.97 } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     { rule = { class = "Firefox", instance = "Navigator" },
       properties = { tag = tags[1][2], border_width = 0 } },

@@ -112,7 +112,7 @@ vicious.register(cpuwidget, vicious.widgets.cpu, '$1', 5)
 -- Create a memory widget
 memwidget = widget({ type = "textbox" })
 --vicious.cache(vicious.widgets.mem)
-vicious.register(memwidget, vicious.widgets.mem, "$2M ", 13)
+vicious.register(memwidget, vicious.widgets.mem, "$2/$9M ", 13)
 
 -- Create a battery widget
 batwidget = widget({ type = "textbox" })

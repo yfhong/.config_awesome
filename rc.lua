@@ -13,6 +13,8 @@ require("vicious")
 -- Eminent library
 package.path = package.path .. ';' .. awful.util.getdir("config") .. "/eminent/?.lua"
 require("eminent")
+-- Keydoc
+local keydoc = require("keydoc")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -279,6 +281,7 @@ function toggle_blank ()
 end
 
 globalkeys = awful.util.table.join(
+    keydoc.group("Misc"),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -293,7 +296,7 @@ globalkeys = awful.util.table.join(
             awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
+    awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end, "Open main menu"),
 
     -- Revelation
     --awful.key({modkey}, "e", revelation),
@@ -341,16 +344,18 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "XF86Eject", toggle_blank),
     awful.key({ modkey }, "Pause", toggle_blank),
     awful.key({ }, "XF86Display", function () awful.util.spawn("my-extern-monitor right") end),
+    awful.key({ modkey }, "F1", keydoc.display),
 
     -- Volume
     awful.key({ modkey }, ".", function () awful.util.spawn("my-volume up") end),
     awful.key({ modkey }, ",", function () awful.util.spawn("my-volume down") end),
 
     -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
-    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
-    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
+    keydoc.group("Layout manipulation"),
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end, "Switch client with next client"),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end, "Switch client with previous client"),
+    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end, "Focus next screen"),
+    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end, "Focus previous screen"),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
     awful.key({ modkey,           }, "Tab",
         function ()
@@ -361,9 +366,10 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Standard program
+    keydoc.group("Standard program"),
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ modkey, "Control" }, "r", awesome.restart),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit),
+    awful.key({ modkey, "Control" }, "r", awesome.restart, "Restart awesome"),
+    awful.key({ modkey, "Shift"   }, "q", awesome.quit, "Quit awesome"),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
@@ -385,13 +391,14 @@ globalkeys = awful.util.table.join(
                   mypromptbox[mouse.screen].widget,
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
-              end)
+              end, "Run Lua code prompt")
 )
 
 clientkeys = awful.util.table.join(
+    keydoc.group("Client key bindings"),
     awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
     awful.key({ modkey,           }, "x",      function (c) c:kill()                         end),
-    awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
+    awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     , "Toggle client floating status"),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
     awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
     awful.key({ modkey, "Shift"   }, "r",      function (c) c:redraw()                       end),

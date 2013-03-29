@@ -48,7 +48,7 @@ beautiful.init(awful.util.getdir("config") .. "/themes/zenburn.lua")
 
 -- This is used later as the default terminal and editor to run.
 -- Hard code urxvt as term
-terminal = "urxvtcd"
+terminal = "urxvt"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 

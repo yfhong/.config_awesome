@@ -392,6 +392,10 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "w", function () awful.util.spawn(work_cmd) end),
     awful.key({ modkey,           }, "e", function () awful.util.spawn_with_shell(emacs_cmd) end),
 
+    -- firefox
+    awful.key({ modkey,           }, "f", function () awful.util.spawn("firefox -P default -no-remote") end),
+    awful.key({ modkey, "Shift"   }, "f", function () awful.util.spawn("firefox -P webdev -no-remote") end),
+
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
@@ -406,7 +410,7 @@ globalkeys = awful.util.table.join(
 
 clientkeys = awful.util.table.join(
     keydoc.group("Client key bindings"),
-    awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
+--    awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
     awful.key({ modkey,           }, "x",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     , "Toggle client floating status"),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),

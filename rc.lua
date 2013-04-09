@@ -52,6 +52,9 @@ terminal = "x-terminal-emulator"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
+-- Working terminal
+work_cmd = "xterm -e tmux new-session -s work"
+
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
@@ -296,7 +299,7 @@ globalkeys = awful.util.table.join(
             awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end, "Open main menu"),
+    -- awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end, "Open main menu"),
 
     -- Revelation
     --awful.key({modkey}, "e", revelation),
@@ -381,6 +384,9 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
+
+    -- main app
+    awful.key({ modkey,           }, "w", function () awful.util.spawn(work_cmd) end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),

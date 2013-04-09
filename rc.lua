@@ -52,6 +52,9 @@ terminal = "x-terminal-emulator"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
+-- Emacs
+emacs_cmd = "LC_CTYPE=zh_CN.UTF-8 emacsclient -a '' -c"
+
 -- Working terminal
 work_cmd = "xterm -e tmux new-session -s work"
 
@@ -387,6 +390,7 @@ globalkeys = awful.util.table.join(
 
     -- main app
     awful.key({ modkey,           }, "w", function () awful.util.spawn(work_cmd) end),
+    awful.key({ modkey,           }, "e", function () awful.util.spawn_with_shell(emacs_cmd) end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
@@ -515,6 +519,8 @@ awful.rules.rules = {
     { rule = { class = "Chromium-browser" },
       properties = { tag = tags[1][2] } },
     -- screen 3
+    { rule = { class = "Emacs" },
+      properties = { tag = tags[1][3] } },
     { rule = { class = "Icedove-bin" },
       properties = { tag = tags[1][3] } },
     -- screen 4

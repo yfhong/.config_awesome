@@ -536,6 +536,12 @@ awful.rules.rules = {
     { rule = { class = "Icedove-bin" },
       properties = { tag = tags[1][3] } },
     -- screen 4
+    { rule = { class = "spicec" },
+      properties = { tag = tags[1][4] } },
+    { rule = { class = "xfreerdp" },
+      properties = { tag = tags[1][4] } },
+    { rule = { class = "rdesktop" },
+      properties = { tag = tags[1][4] } },
     { rule = { class = "Pidgin" },
       properties = { tag = tags[1][4] } },
     { rule = { class = "emesene" },

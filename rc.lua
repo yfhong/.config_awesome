@@ -327,13 +327,13 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Center window
-    awful.key({ modkey, }, "c",
-        function ()
-            local c = client.focus
-            if c then
-                awful.placement.centered(c, c.transient_for)
-            end
-        end),
+    -- awful.key({ modkey, }, "c",
+    --     function ()
+    --         local c = client.focus
+    --         if c then
+    --             awful.placement.centered(c, c.transient_for)
+    --         end
+    --     end),
 
     -- Make window ontop
     awful.key({ modkey, }, "t",
@@ -395,6 +395,10 @@ globalkeys = awful.util.table.join(
     -- firefox
     awful.key({ modkey,           }, "f", function () awful.util.spawn("firefox -P default -no-remote") end),
     awful.key({ modkey, "Shift"   }, "f", function () awful.util.spawn("firefox -P webdev -no-remote") end),
+
+    -- chrome
+    awful.key({ modkey,           }, "c", function () awful.util.spawn("chromium --proxy-pac-url=file:///home/homer/.pentadactyl/proxy.pac --user-data-dir=~/.config/chromium-default --enable-easy-off-store-extension-install") end),
+    awful.key({ modkey, "Shift"   }, "c", function () awful.util.spawn("chromium --proxy-pac-url=file:///home/homer/.pentadactyl/proxy.pac --user-data-dir=~/.config/chromium-webdev --enable-easy-off-store-extension-install") end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
@@ -520,7 +524,11 @@ awful.rules.rules = {
       properties = { tag = tags[1][2], border_width = 0 } },
     { rule = { class = "Aurora", instance = "Navigator" },
       properties = { tag = tags[1][2] } },
+    { rule = { class = "Chromium" },
+      properties = { tag = tags[1][2] } },
     { rule = { class = "Chromium-browser" },
+      properties = { tag = tags[1][2] } },
+    { rule = { class = "Google-chrome" },
       properties = { tag = tags[1][2] } },
     -- screen 3
     { rule = { class = "Emacs" },

@@ -47,8 +47,8 @@ end
 beautiful.init(awful.util.getdir("config") .. "/themes/zenburn.lua")
 
 -- This is used later as the default terminal and editor to run.
--- Hard code urxvt as term
-terminal = "urxvt"
+-- Use x-terminal-emulator
+terminal = "x-terminal-emulator"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -493,6 +493,8 @@ awful.rules.rules = {
       properties = { floating = true } },
     { rule = { class = "Cview" },
       properties = { floating = true } },
+    { rule = { class = "UXTerm" },
+      properties = { opacity = 0.97, border_width = beautiful.border_width } },
     { rule = { class = "URxvt" },
       properties = { opacity = 0.97, border_width = beautiful.border_width } },
     { rule = { class = "Gvim" },
